@@ -5830,10 +5830,50 @@ RefreshThemesUI()
 -- SETTINGS (before CONFIG UI so tab always builds even if config UI errors)
 APEX_MIRAGE_RAW_URL = "https://raw.githubusercontent.com/scripterbbn/Apex-Mirage/main/Apex%20Mirage.lua"
 function QueueApexAfterTeleport()
-    local queueTeleport = queue_on_teleport or queueonteleport
-    if not queueTeleport then return false end
-    local loader = 'task.wait(2); loadstring(game:HttpGet("' .. APEX_MIRAGE_RAW_URL .. '"))()'
-    return pcall(queueTeleport, loader)
+    local env = getgenv and getgenv() or _G
+    local queueTeleport = (env and (env.queue_on_teleport or env.queueonteleport or env.queue_on_tp))
+        or queue_on_teleport or queueonteleport
+        or (syn and syn.queue_on_teleport)
+        or (fluxus and fluxus.queue_on_teleport)
+    if type(queueTeleport) ~= "function" then
+        pcall(function() StarterGui:SetCore("SendNotification", {Title="Apex Mirage", Text="Teleport queue is not supported by this executor", Duration=4}) end)
+        return false
+    end
+    local loader = string.format([[
+repeat task.wait(0.25) until game:IsLoaded()
+task.wait(3)
+for attempt = 1, 10 do
+    local ok, source = pcall(function()
+        return game:HttpGet(%q, true)
+    end)
+    if ok and source and #source > 0 then
+        local chunk = loadstring(source)
+        if chunk then
+            local ran = pcall(chunk)
+            if ran then break end
+        end
+    end
+    task.wait(2)
+end
+]], APEX_MIRAGE_RAW_URL)
+    local queuedSource = loader
+    if writefile and readfile then
+        local loaderPath = APEX_MIRAGE_DIR .. "/rejoin_loader.lua"
+        local wrote = pcall(writefile, loaderPath, loader)
+        if wrote then
+            queuedSource = 'loadstring(readfile("' .. loaderPath .. '"))()'
+        end
+    end
+    local callOk, queueResult = pcall(queueTeleport, queuedSource)
+    local ok = callOk and queueResult ~= false
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title="Apex Mirage",
+            Text=ok and "Auto-execute queued" or "Failed to queue auto-execute",
+            Duration=3,
+        })
+    end)
+    return ok
 end
 CreateAction("Rejoin", Pages.SETTINGS, 60, C.Blue, function()
     QueueApexAfterTeleport()
