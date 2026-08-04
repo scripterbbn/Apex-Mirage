@@ -5828,7 +5828,7 @@ RefreshThemesUI = function()
 end
 RefreshThemesUI()
 -- SETTINGS (before CONFIG UI so tab always builds even if config UI errors)
-APEX_MIRAGE_RAW_URL = "https://raw.githubusercontent.com/scripterbbn/Apex-Mirage/main/script"
+APEX_MIRAGE_RAW_URL = "https://raw.githubusercontent.com/scripterbbn/Apex-Mirage/main/Apex%20Mirage.lua"
 function QueueApexAfterTeleport()
     local queueTeleport = queue_on_teleport or queueonteleport
     if not queueTeleport then return false end
