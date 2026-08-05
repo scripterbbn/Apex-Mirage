@@ -1,8 +1,8 @@
 -- ╔══════════════════════════════════════╗
---      APEX MIRAGE v1.8.5 — THEMED EDITION    ║
+--      APEX MIRAGE v1.9 — THEMED EDITION    ║
 --        Toggle GUI: Insert key          ║
 -- ═══════════════════════════════════════╝
--- v1.8.5: Chat, orbit and utility update
+-- v1.9: Chat, autoload and utility update
 -- Services
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
@@ -2224,7 +2224,7 @@ local VerLabel = Instance.new("TextLabel")
 VerLabel.Size = UDim2.new(1, -12, 0, 16)
 VerLabel.Position = UDim2.new(0, 6, 1, -20)
 VerLabel.BackgroundTransparency = 1
-VerLabel.Text = "version: 1.8.5"
+VerLabel.Text = "version: 1.9"
 VerLabel.TextColor3 = C.TDim
 VerLabel.Font = Enum.Font.Gotham
 VerLabel.TextSize = 16
@@ -7065,4 +7065,4 @@ task.spawn(function()
     end)
 end)
 -- ─────────────────────────────────────────────────────────
-print("[Apex Mirage v1.8.5] Loaded — Themed Edition")
+print("[Apex Mirage v1.9] Loaded — Themed Edition")
