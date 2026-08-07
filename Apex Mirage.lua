@@ -5491,7 +5491,7 @@ end
 CreateSlider("Death Sound Volume (%)", 0, 100, 100, Pages.MISC, 1078, C.Purple, function(V)
     Config.DeathSoundVolume = V
 end)
-local EmoteCard = CreateToggle("Emote", "Play a selected character emote", Pages.MISC, 1134, C.Purple, function(S)
+local EmoteCard = CreateToggle("Emote", "Doesn't work in games that lock body parts", Pages.MISC, 1134, C.Purple, function(S)
     Config.EmoteEnabled = S
     if S then StartEmote() else StopEmote() end
 end)
