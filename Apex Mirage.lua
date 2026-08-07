@@ -1,8 +1,5 @@
--- ╔══════════════════════════════════════╗
---      APEX MIRAGE v1.9 — THEMED EDITION    ║
---        Toggle GUI: Insert key          ║
--- ═══════════════════════════════════════╝
--- v1.9: Chat, autoload and utility update
+-- APEX MIRAGE v1.9 — THEMED EDITION
+-- Toggle GUI: Insert
 -- Services
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
@@ -16,7 +13,7 @@ local Lighting = game:GetService("Lighting")
 ContentProvider = game:GetService("ContentProvider")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
--- ═══════ CONFIG ═══════
+-- CONFIG
 local function DeepCopy(value)
     if type(value) ~= "table" then return value end
     local copy = {}
@@ -121,7 +118,7 @@ local function IsCheatFriend(player)
     return Config.Friends[tostring(player.UserId)] == true
         or Config.Friends[player.UserId] == true
 end
--- ═══════ COLORS ══════
+-- COLORS
 local C = {
     BG = Color3.fromRGB(4, 4, 5),
     Sidebar = Color3.fromRGB(7, 7, 8),
@@ -155,15 +152,13 @@ local function MakeStroke(parent, color, thickness)
     s.Parent = parent
     return s
 end
--- ═══════ CLIPBOARD ═════
+-- CLIPBOARD
 local function CopyToClipboard(text)
     if setclipboard then setclipboard(text) return true end
     if pcall(function() game:SetClipboard(text) end) then return true end
     return false
 end
--- ══════════════════════════════════════════════
 --   SKELETON ESP — R6 only (Drawing API)
--- ══════════════════════════════════════════════
 local R6_BONES = {
     {"Head", "Torso"},
     {"Torso", "Left Arm"},
@@ -261,9 +256,7 @@ local function UpdateAllSkeletons()
         RemoveAllSkeletons()
     end
 end
--- ══════════════════════════════════════════════
 --   ITEM ESP — ProximityPrompt and ClickDetector objects
--- ══════════════════════════════════════════════
 ItemESPObjects = {}
 ItemESPAddedConn = nil
 ItemESPRefreshConn = nil
@@ -387,9 +380,7 @@ function StartItemESP()
         end
     end)
 end
--- ══════════════════════════════════════════════
 --   FLY (CFrame + velocity zero)
--- ══════════════════════════════════════════════
 local V3_ZERO = Vector3.new(0, 0, 0)
 local FlyConn1, FlyConn2 = nil, nil
 local function StopFly()
@@ -459,13 +450,11 @@ table.insert(Connections, LocalPlayer.CharacterAdded:Connect(function()
         StartFly()
     end
 end))
--- ══════════════════════════════════════════════
 --   BLINK NOCLIP
 --   Server: character stays anchored in place
 --   Local:  ghost part inside Camera (not replicated) moves freely
 --   Camera: CameraSubject = ghost → mouse rotation still works normally
 --   On disable: Root.CFrame = ghost position (the "blink")
--- ══════════════════════════════════════════════
 local BlinkGhost = nil  -- BasePart inside workspace.CurrentCamera (client-only)
 local function StopBlink()
     Config.NoclipEnabled = false
@@ -524,9 +513,7 @@ table.insert(Connections, RunService.Heartbeat:Connect(function(dt)
     if dir.Magnitude > 0 then dir = dir.Unit end
     BlinkGhost.CFrame = CFrame.new(BlinkGhost.Position + dir * Config.NoclipSpeed * dt)
 end))
--- ══════════════════════════════════════════════
 --   COLOR PICKER  (circular hue wheel + brightness)
--- ══════════════════════════════════════════════
 local ActivePicker = nil
 local function OpenColorPicker(key, swatchBtn, screenGui, anchorFrame)
     if ActivePicker then ActivePicker:Destroy(); ActivePicker = nil end
@@ -730,9 +717,7 @@ local function OpenColorPicker(key, swatchBtn, screenGui, anchorFrame)
         UpdateESP()
     end)
 end
--- ══════════════════════════════════════════════
 --   TIME STOP
--- ══════════════════════════════════════════════
 local HitboxConn = nil
 local _hbOrigSizes = {}   -- [player] = originalHeadSize (Vector3)
 local function StopHitbox()
@@ -799,12 +784,10 @@ local function StartHitbox()
         end)
     end)
 end
--- ══════════════════════════════════════════════
 --   FREE CAM
 --   Scriptable camera decoupled from character.
 --   Mouse rotates view, WASD/Space/Ctrl move it.
 --   LeftShift = speed boost (x3).
--- ══════════════════════════════════════════════
 local FC_BIND  = "ApexMirageFreeCam"
 local FC_CF    = CFrame.new(0, 0, 0)
 local FC_PITCH = 0
@@ -905,10 +888,8 @@ local function StartFreeCam()
         workspace.CurrentCamera.CFrame = FC_CF
     end)
 end
--- ══════════════════════════════════════════════
 --   FORCED LIGHTING OVERRIDES
 --   Reapplied every frame so the game cannot overwrite them.
--- ══════════════════════════════════════════════
 local OriginalLighting = {
     Brightness = Lighting.Brightness,
     ClockTime = Lighting.ClockTime,
@@ -977,10 +958,8 @@ end
 table.insert(Connections, RunService.RenderStepped:Connect(function()
     if ScriptAlive then ApplyForcedLighting() end
 end))
--- ══════════════════════════════════════════════
 --   NO CD JUMP
 --   Re-enables and requests Jumping continuously to bypass client-side delays.
--- ══════════════════════════════════════════════
 local LastForcedJump = 0
 local ForcedJumpCapUntil = 0
 local function ForceJumpNow()
@@ -1035,10 +1014,8 @@ table.insert(Connections, RunService.Heartbeat:Connect(function()
     end
     if UIS:IsKeyDown(Enum.KeyCode.Space) then ForceJumpNow() end
 end))
--- ══════════════════════════════════════════════
 --   INSTANT INTERACTION
 --   Forces every ProximityPrompt hold duration to zero.
--- ══════════════════════════════════════════════
 InstantPromptOriginals = setmetatable({}, {__mode = "k"})
 InstantPromptAddedConn = nil
 InstantPromptEnforceConn = nil
@@ -1083,10 +1060,8 @@ function StartInstantInteraction()
         end
     end)
 end
--- ══════════════════════════════════════════════
 --   NO VOID
 --   NaN protection plus clone desync fallback for server-side void checks.
--- ══════════════════════════════════════════════
 OriginalFallenPartsDestroyHeight = workspace.FallenPartsDestroyHeight
 NoVoidConn = nil
 function StopNoVoid()
@@ -1110,9 +1085,7 @@ function StartNoVoid()
         end
     end)
 end
--- ══════════════════════════════════════════════
 --   ORBIT — moves the local character around a selected player.
--- ══════════════════════════════════════════════
 OrbitConn = nil
 OrbitAngle = 0
 OrbitCollisionStates = setmetatable({}, {__mode="k"})
@@ -1168,9 +1141,7 @@ function StartOrbit()
         localRoot.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
     end)
 end
--- ══════════════════════════════════════════════
 --   ANTI-FLING — protects the local character from extreme physics impulses.
--- ══════════════════════════════════════════════
 AntiFlingConn = nil
 AntiFlingSafeCFrame = nil
 AntiFlingSaveElapsed = 0
@@ -1239,9 +1210,7 @@ function StartAntiFling()
         end
     end)
 end
--- ══════════════════════════════════════════════
 --   EMOTE PLAYER
--- ══════════════════════════════════════════════
 EmoteTrack = nil
 EmoteCharacterConn = nil
 EmoteMaintainConn = nil
@@ -1304,10 +1273,8 @@ function StartEmote()
         end
     end)
 end
--- ══════════════════════════════════════════════
 --   CLONE DESYNC INVISIBILITY
 --   Controls a local clone while the server character is held far away.
--- ══════════════════════════════════════════════
 InvisOriginalCharacter = nil
 InvisCloneCharacter = nil
 InvisOriginalRootAnchored = false
@@ -1463,7 +1430,6 @@ end
 --     what caused the cyan text glow on tab labels).
 --   Also: TextStrokeTransparency = 1 + TextStrokeColor3 = black
 --   on every TextLabel / TextButton for good measure.
--- ══════════════════════════════════════════════
 SG = Instance.new("ScreenGui")
 SG.Name = "ApexMirageGUI"
 SG.ResetOnSpawn = false
@@ -2033,7 +1999,7 @@ if writefile and isfile and getcustomasset then
     CustomDeathSound2Asset = deathAssets[2]
     CustomDeathSound3Asset = deathAssets[3]
 end
--- ── LOADING SCREEN ───────────────────────────────────────
+-- LOADING SCREEN
 -- Blocks Insert from opening the main menu before loading is complete.
 IsLoading = true
 LoadFrame = Instance.new("Frame")
@@ -2128,7 +2094,6 @@ task.spawn(function()
     task.wait(15)
     if LoadSound and LoadSound.Parent then LoadSound:Destroy() end
 end)
--- ─────────────────────────────────────────────────────────
 local MF = Instance.new("Frame")
 MF.Name = "MainFrame"
 MF.Size = UDim2.new(0, 480, 0, 560)
@@ -2295,7 +2260,7 @@ end
 for _, N in ipairs(TabN) do
     TabB[N].MouseButton1Click:Connect(function() SwitchTab(N) end)
 end
--- ═══════ GLOBAL FUNCTION SEARCH ═══════
+-- GLOBAL FUNCTION SEARCH
 function RegisterSearchEntry(name, parent, yPos, object)
     table.insert(SearchEntries, {Name=name, Parent=parent, Y=yPos or 0, Object=object})
 end
@@ -2440,7 +2405,7 @@ function RefreshFunctionSearch()
     end
 end
 SearchBar:GetPropertyChangedSignal("Text"):Connect(RefreshFunctionSearch)
--- ═══════ LOCAL SCRIPT CHAT ═══════
+-- LOCAL SCRIPT CHAT
 CHAT_API_URL = "https://worker.macanchatworking.workers.dev"
 ChatRoom = game.JobId ~= "" and game.JobId or ("place-" .. tostring(game.PlaceId))
 ChatSeenIds = {}
@@ -2854,7 +2819,7 @@ task.spawn(function()
         task.wait(9.8)
     end
 end)
--- ═══════ THEMES ═══════
+-- THEMES
 ThemeLogoImages = {
     -- Cosmic uses the supplied texture ID because ImageLabel requires image content.
     Cosmic = "rbxassetid://13482137220",
@@ -3206,7 +3171,7 @@ table.insert(Connections, UIS.InputChanged:Connect(function(Inp)
         MF.Position = UDim2.new(StartPos.X.Scale, StartPos.X.Offset + D.X, StartPos.Y.Scale, StartPos.Y.Offset + D.Y)
     end
 end))
--- ═══════ SLIDER ═══════
+-- SLIDER
 local function CreateSlider(Name, Min, Max, Default, Parent, YPos, Color, Callback, LinkedToggle)
     local Con = Instance.new("Frame")
     Con.Size = UDim2.new(1, 0, 0, 45)
@@ -3399,7 +3364,7 @@ table.insert(Connections, UIS.InputEnded:Connect(function(Inp)
         for _, S in ipairs(AllSliders) do S.Dragging = false end
     end
 end))
--- ═══════ TOGGLE ═══════
+-- TOGGLE
 local function CreateToggle(Name, Desc, Parent, YPos, Color, Callback)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(1, 0, 0, 50)
@@ -3519,7 +3484,7 @@ local function CreateToggle(Name, Desc, Parent, YPos, Color, Callback)
     Refresh()
     return Card
 end
--- ═══════ SMALL TOGGLE ═══════
+-- SMALL TOGGLE
 local function CreateSmallToggle(Name, Parent, YPos, Color, Callback)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(1, 0, 0, 44)
@@ -3599,7 +3564,7 @@ local function CreateSmallToggle(Name, Parent, YPos, Color, Callback)
     Refresh()
     return Card
 end
--- ══════ ACTION ═══════
+-- ACTION
 local function CreateAction(Name, Parent, YPos, Color, Callback)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(1, 0, 0, 48)
@@ -3653,7 +3618,7 @@ local function CreateAction(Name, Parent, YPos, Color, Callback)
     end)
     return Card
 end
--- ═══════ PAGES ═══════
+-- PAGES
 -- ESP
 local EnableESPCard = CreateToggle("Enable ESP", "Toggle all ESP rendering", Pages.ESP, 0, C.Accent, function(S)
     ESPConfig.Enabled = S
@@ -4200,7 +4165,7 @@ for _, actionCard in ipairs({SaveLocationCard, TeleportLocationCard}) do
         end
     end
 end
--- ── TP TO COORD ─────────────────────────────────────────────
+-- TP TO COORD
 do
     local coordColor = C.Accent
     local CoordCard = Instance.new("Frame")
@@ -4328,7 +4293,7 @@ do
         CSub.Text = "X:"..Config.CoordX.."  Y:"..Config.CoordY.."  Z:"..Config.CoordZ
     end)
 end
--- ── AIM ASSISTANT ────────────────────────────────────────────
+-- AIM ASSISTANT
 local AimConn = nil
 CurrentAimHumanoid = nil
 local function StopAim()
@@ -4422,9 +4387,7 @@ local function StartAim()
         cam.CFrame     = cam.CFrame:Lerp(targetCF, alpha)
     end)
 end
--- ══════════════════════════════════════════════
 --   HIT SOUND — monitors health of the current Aim Assistant target.
--- ══════════════════════════════════════════════
 HitSoundWatchConn = nil
 HitSoundInputConn = nil
 HitSoundLocalAttackUntil = 0
@@ -4791,7 +4754,6 @@ function StartDrawFOV()
         FOVCircle.Visible = Config.DrawFOV and Config.AimFOV > 0
     end)
 end
--- ─────────────────────────────────────────────────────────────
 -- RAGE
 CreateToggle("Fly", "Fly around the map",   Pages.RAGE,   0, C.Red,    function(S) Config.FlyEnabled = S; if S then StartFly() else StopFly() end end)
 CreateSlider("Fly Speed", 10, 1000, 60,   Pages.RAGE,  54, C.Red,    function(V) Config.FlySpeed    = V end, "Fly")
@@ -6015,7 +5977,7 @@ CreateAction("Unload", Pages.SETTINGS, 168, C.Red, function()
     if SG then SG:Destroy() end
     pcall(function() StarterGui:SetCore("SendNotification", {Title="Apex Mirage", Text="Script Unloaded", Duration=3}) end)
 end)
--- ═══════ CONFIG SYSTEM ═══════
+-- CONFIG SYSTEM
 local CONFIG_DIR = APEX_MIRAGE_CONFIG_DIR
 local ApplyLoadedConfig
 AUTOLOAD_CONFIG_FILE = APEX_MIRAGE_DIR .. "/autoload_config.json"
@@ -6462,7 +6424,7 @@ do  -- ── CONFIG UI inside SETTINGS ─────────────�
     RefreshConfigListUI = RefreshConfigList
     task.defer(RefreshConfigList)
 end
--- ═══════ BINDS + INSERT ══════
+-- BINDS + INSERT
 -- Mouse binds use tostring(UserInputType) as key -- safe in all executors
 -- Keyboard binds -- original handler, untouched
 table.insert(Connections, UIS.InputBegan:Connect(function(Input, GP)
@@ -6556,9 +6518,7 @@ table.insert(Connections, UIS.InputBegan:Connect(function(Input, GP)
     end
 end))
 -- NOCLIP handled by blink system (StartBlink/StopBlink above)
--- ══════════════════════════════════════════════
 --         ESP SYSTEM
--- ═══════════════════════════════════════════════
 -- Stable upright 2D character box. Its width is derived from screen height,
 -- so rotating the camera around a character cannot widen the box.
 local function GetScreenBox(char)
@@ -6868,7 +6828,7 @@ task.spawn(function()
         end
     end
 end)
--- ═══════ SPEED & JUMP — FIX: UseJumpPower = true ═══════
+-- SPEED & JUMP — FIX: UseJumpPower = true
 local function ApplySpeedAndJump()
     if not ScriptAlive then return end
     local Char = LocalPlayer.Character
@@ -7018,7 +6978,7 @@ ApplyLoadedConfig = function()
 end
 -- Apply the default theme after every interface element has been created.
 ApplyTheme(Config.Theme or "Cosmic")
--- ── LOADING ANIMATION ────────────────────────────────────
+-- LOADING ANIMATION
 local loadSteps = {
     {p = 0.15, text = "Initializing modules..."},
     {p = 0.35, text = "Loading ESP system..."},
@@ -7064,5 +7024,4 @@ task.spawn(function()
         end
     end)
 end)
--- ─────────────────────────────────────────────────────────
 print("[Apex Mirage v1.9] Loaded — Themed Edition")
